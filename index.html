@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="FlowCraft">
+<title>FlowCraft</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#FAF7F2;min-height:100vh;color:#2E2A22;}
+.app{max-width:480px;margin:0 auto;padding:0 0 2.5rem;}
+.screen{display:none;}.screen.active{display:block;}
+
+.accent{font-family:Georgia,'Times New Roman',serif;}
+
+.hero{background:#F5F0E8;padding:2rem 1.25rem 1.75rem;border-radius:0 0 28px 28px;}
+.hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#A89880;margin-bottom:8px;}
+.hero-greeting{font-family:Georgia,serif;font-size:30px;font-weight:400;font-style:italic;color:#2E2A22;line-height:1.2;margin-bottom:4px;}
+.hero-date{font-size:13px;color:#8C7F6B;margin-bottom:8px;}
+.hero-tagline{font-size:14px;color:#7A6F5E;margin-bottom:1.5rem;line-height:1.6;}
+.intention-label{font-size:11px;font-weight:600;color:#A89880;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;}
+.intention-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem;}
+.int-pill{padding:9px 17px;border-radius:22px;border:1px solid #C8BFAE;font-size:13px;color:#7A6F5E;cursor:pointer;background:#FAF7F2;-webkit-tap-highlight-color:transparent;transition:all 0.18s;}
+.int-pill:hover{background:#EDE5D8;border-color:#A89880;}
+.int-pill.mood-sel-sage{background:#5C7A5C;border-color:#5C7A5C;color:#fff;}
+.int-pill.mood-sel-terra{background:#B05E3A;border-color:#B05E3A;color:#fff;}
+.hero-cta{width:100%;padding:15px;background:#5C7A5C;color:#fff;border:none;border-radius:14px;font-size:15px;font-family:Georgia,serif;font-style:italic;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity 0.18s;letter-spacing:0.01em;}
+.hero-cta:hover{opacity:0.88;}
+.hero-cta:disabled{background:#C8BFAE;cursor:default;opacity:0.6;}
+
+.home-body{padding:1.5rem 1.25rem 0;}
+.streak-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.75rem;}
+.streak-card{background:#F5F0E8;border-radius:16px;padding:1rem;text-align:center;}
+.streak-val{font-family:Georgia,serif;font-size:26px;font-weight:400;font-style:italic;color:#5C7A5C;}
+.streak-lbl{font-size:11px;color:#8C7F6B;margin-top:3px;letter-spacing:0.02em;}
+
+.section-label{font-size:11px;font-weight:600;color:#A89880;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px;}
+
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.75rem;}
+.quick-card{background:#fff;border:1px solid #E8E0D4;border-radius:18px;padding:1.1rem;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.18s;}
+.quick-card:hover{background:#F5F0E8;border-color:#C8BFAE;}
+.q-duration{font-family:Georgia,serif;font-size:28px;font-weight:400;font-style:italic;color:#5C7A5C;}
+.q-type{font-size:13px;color:#8C7F6B;margin-top:3px;}
+.q-badge{font-size:11px;background:#E8F0E8;color:#3D5C3D;padding:3px 10px;border-radius:12px;display:inline-block;margin-top:8px;}
+
+.mode-stack{display:flex;flex-direction:column;gap:10px;margin-bottom:1.75rem;}
+.mode-row{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #E8E0D4;border-radius:18px;padding:1rem 1.1rem;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.18s;}
+.mode-row:hover{background:#F5F0E8;border-color:#C8BFAE;}
+.mode-icon-wrap{width:40px;height:40px;border-radius:12px;background:#E8F0E8;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.mode-row-title{font-family:Georgia,serif;font-size:15px;font-style:italic;color:#2E2A22;}
+.mode-row-desc{font-size:12px;color:#8C7F6B;margin-top:3px;line-height:1.4;}
+
+.divider{display:flex;align-items:center;gap:10px;margin:0.25rem 0 1.25rem;}
+.div-line{flex:1;height:1px;background:#E0D8CC;}
+.div-text{font-size:12px;color:#A89880;}
+
+.pill-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.1rem;}
+.pill{padding:8px 16px;border-radius:22px;border:1px solid #C8BFAE;font-size:13px;color:#7A6F5E;cursor:pointer;background:#FAF7F2;-webkit-tap-highlight-color:transparent;transition:all 0.18s;}
+.pill:hover{background:#EDE5D8;}
+.pill.sel{background:#5C7A5C;border-color:#5C7A5C;color:#fff;}
+
+.slider-row{display:flex;align-items:center;gap:12px;margin-bottom:1rem;}
+.slider-row label{font-size:13px;color:#7A6F5E;min-width:80px;}
+.slider-row input[type=range]{flex:1;accent-color:#5C7A5C;height:4px;}
+.slider-val{font-size:13px;font-weight:600;color:#2E2A22;min-width:48px;text-align:right;}
+
+.summary-card{background:#F5F0E8;border-radius:16px;padding:1rem 1.1rem;margin:.75rem 0 1.1rem;}
+.summary-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;}
+.summary-row+.summary-row{border-top:1px solid #DDD5C5;}
+.summary-key{font-size:13px;color:#8C7F6B;}
+.summary-val{font-size:13px;font-weight:600;color:#2E2A22;}
+
+.btn-primary{width:100%;padding:15px;background:#5C7A5C;color:#fff;border:none;border-radius:14px;font-size:15px;font-family:Georgia,serif;font-style:italic;cursor:pointer;margin-bottom:10px;-webkit-tap-highlight-color:transparent;transition:opacity 0.18s;}
+.btn-primary:hover{opacity:0.88;}
+.btn-secondary{width:100%;padding:12px;background:transparent;color:#8C7F6B;border:1px solid #C8BFAE;border-radius:14px;font-size:14px;cursor:pointer;margin-bottom:10px;-webkit-tap-highlight-color:transparent;transition:background 0.18s;}
+.btn-secondary:hover{background:#F5F0E8;}
+
+.intensity-row{display:flex;gap:8px;margin-bottom:1.1rem;}
+.int-card{flex:1;border:1px solid #E8E0D4;border-radius:14px;padding:12px 8px;text-align:center;cursor:pointer;background:#fff;-webkit-tap-highlight-color:transparent;transition:all 0.18s;}
+.int-card:hover{background:#F5F0E8;}
+.int-card.sel-gentle{background:#E8F0E8;border-color:#5C7A5C;}
+.int-card.sel-moderate{background:#F5EDD8;border-color:#B8882A;}
+.int-card.sel-strong{background:#F5EAE5;border-color:#B05E3A;}
+.int-label{font-family:Georgia,serif;font-size:14px;font-style:italic;color:#2E2A22;}
+.int-card.sel-gentle .int-label{color:#2E4A2E;}
+.int-card.sel-moderate .int-label{color:#5C4010;}
+.int-card.sel-strong .int-label{color:#6B2E14;}
+.int-desc{font-size:11px;color:#8C7F6B;margin-top:3px;}
+
+.goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.1rem;}
+.goal-card{border:1px solid #E8E0D4;border-radius:14px;padding:12px;cursor:pointer;background:#fff;-webkit-tap-highlight-color:transparent;transition:all 0.18s;}
+.goal-card:hover{background:#F5F0E8;}
+.goal-card.sel{border-color:#8A5C34;background:#F5EDE0;}
+.goal-title{font-family:Georgia,serif;font-size:13px;font-style:italic;color:#2E2A22;}
+.goal-card.sel .goal-title{color:#4A2E10;}
+.goal-out{font-size:11px;color:#8C7F6B;margin-top:3px;}
+.goal-card.sel .goal-out{color:#7A4E20;}
+
+.pose-list-preview{margin:.5rem 0 1rem;}
+.pose-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid #EDE5D8;}
+.pose-num{width:22px;height:22px;border-radius:50%;background:#E8F0E8;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#2E4A2E;flex-shrink:0;margin-top:2px;}
+.pose-info{flex:1;}
+.pose-name-p{font-size:13px;color:#2E2A22;}
+.pose-phase-tag{font-size:10px;padding:2px 7px;border-radius:8px;background:#F5F0E8;color:#8C7F6B;margin-left:5px;}
+.pose-side-tag{font-size:10px;padding:2px 7px;border-radius:8px;margin-left:4px;}
+.side-right{background:#E8F0E8;color:#2E4A2E;}
+.side-left{background:#F5EAE5;color:#6B2E14;}
+.side-both{background:#F5EDD8;color:#5C4010;}
+.pose-dur-p{font-size:11px;color:#8C7F6B;white-space:nowrap;margin-top:2px;}
+
+.sc-wrap{padding:0 0 10px;}
+.sc-wrap iframe{border-radius:14px;display:block;width:100%;}
+
+.ready-wrap{text-align:center;padding:3.5rem 1.5rem;}
+.ready-eyebrow{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#A89880;margin-bottom:14px;}
+.ready-first{font-family:Georgia,serif;font-size:24px;font-weight:400;font-style:italic;color:#2E2A22;margin-bottom:8px;}
+.ready-meta{font-size:13px;color:#8C7F6B;margin-bottom:2.5rem;line-height:1.7;}
+.play-btn{width:80px;height:80px;border-radius:50%;background:#5C7A5C;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:0 auto 1.1rem;-webkit-tap-highlight-color:transparent;transition:opacity 0.18s;}
+.play-btn:hover{opacity:0.88;}
+.ready-hint{font-size:13px;color:#A89880;}
+
+.countdown-wrap{text-align:center;padding:5rem 1.5rem;}
+.cd-num{font-family:Georgia,serif;font-size:96px;font-weight:400;font-style:italic;color:#5C7A5C;line-height:1;}
+.cd-pose{font-family:Georgia,serif;font-size:18px;font-style:italic;color:#2E2A22;margin-top:1.25rem;}
+.cd-phase{font-size:13px;color:#8C7F6B;margin-top:5px;}
+
+.sess-topbar{padding:.75rem 1.25rem .5rem;border-bottom:1px solid #EDE5D8;}
+.sess-title-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+.sess-title-txt{font-size:12px;color:#8C7F6B;letter-spacing:0.04em;}
+.sess-counter{font-size:12px;color:#A89880;}
+.progress-bar-wrap{height:4px;background:#E8F0E8;border-radius:2px;}
+.progress-bar-fill{height:100%;border-radius:2px;background:#5C7A5C;transition:width 0.5s ease;}
+
+.phase-banner{font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#A89880;padding:6px 1.25rem;background:#F5F0E8;display:flex;align-items:center;gap:8px;}
+.side-indicator{font-size:10px;font-weight:600;padding:2px 9px;border-radius:10px;}
+
+/* coming-up toast animation */
+.coming-up-toast{
+  position:fixed;
+  bottom:100px;
+  left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:rgba(46,42,34,0.85);
+  color:#FAF7F2;
+  font-family:Georgia,serif;
+  font-style:italic;
+  font-size:15px;
+  padding:12px 24px;
+  border-radius:30px;
+  opacity:0;
+  transition:opacity 0.4s ease, transform 0.4s ease;
+  pointer-events:none;
+  z-index:999;
+  white-space:nowrap;
+  backdrop-filter:blur(6px);
+}
+.coming-up-toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+/* screen dim overlay when coming up plays */
+.audio-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(46,42,34,0);
+  pointer-events:none;
+  z-index:990;
+  transition:background 0.4s ease;
+}
+.audio-overlay.active{
+  background:rgba(46,42,34,0.18);
+}
+
+.pose-card{background:#fff;border:1px solid #E8E0D4;border-radius:20px;padding:1.5rem;margin:10px 1.25rem;}
+.pose-card-name{font-family:Georgia,serif;font-size:22px;font-weight:400;font-style:italic;color:#2E2A22;margin-bottom:4px;}
+.pose-card-timer{font-family:Georgia,serif;font-size:56px;font-weight:400;font-style:italic;color:#5C7A5C;margin:4px 0 8px;}
+.cue-block{background:#F5F0E8;border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;}
+.cue-row{display:flex;flex-direction:column;gap:4px;}
+.cue-row+.cue-row{border-top:1px solid #E0D8CC;padding-top:10px;}
+.cue-label{font-size:10px;font-weight:600;color:#A89880;text-transform:uppercase;letter-spacing:0.06em;}
+.cue-text{font-size:13px;color:#5C4A35;line-height:1.6;}
+
+.bilateral-banner{background:#F5EAE5;border-radius:12px;padding:10px 14px;margin-top:10px;display:flex;align-items:center;gap:8px;}
+.bilateral-text{font-size:13px;color:#6B2E14;flex:1;}
+
+.next-card{background:transparent;border:1px solid #E8E0D4;border-radius:14px;padding:10px 14px;margin:8px 1.25rem;}
+.next-label{font-size:11px;color:#A89880;letter-spacing:0.03em;}
+.next-name{font-family:Georgia,serif;font-size:14px;font-style:italic;color:#2E2A22;margin-top:3px;}
+
+.controls{display:flex;gap:8px;margin:10px 1.25rem;}
+.ctrl-btn{flex:1;padding:14px;border-radius:14px;border:1px solid #C8BFAE;background:transparent;font-size:14px;color:#2E2A22;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.18s;}
+.ctrl-btn:hover{background:#F5F0E8;}
+.ctrl-btn.main{background:#5C7A5C;color:#fff;border-color:#5C7A5C;font-family:Georgia,serif;font-style:italic;}
+.ctrl-btn.main:hover{opacity:0.88;background:#5C7A5C;}
+
+.sc-session{padding:8px 1.25rem 0;}
+.sc-session iframe{border-radius:12px;display:block;width:100%;}
+
+.voice-box{background:#F5F0E8;border-radius:14px;padding:14px 16px;margin-bottom:1.1rem;}
+.voice-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.voice-row:last-child{margin-bottom:0;}
+.voice-lbl{font-size:13px;color:#7A6F5E;min-width:60px;}
+.voice-val{font-size:13px;font-weight:600;color:#2E2A22;min-width:48px;text-align:right;}
+.voice-row input[type=range]{flex:1;accent-color:#5C7A5C;}
+
+.history-item{background:#fff;border:1px solid #E8E0D4;border-radius:16px;padding:14px 16px;margin-bottom:10px;}
+.history-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.history-title{font-family:Georgia,serif;font-size:14px;font-style:italic;color:#2E2A22;}
+.history-date{font-size:11px;color:#A89880;}
+.history-meta{font-size:12px;color:#8C7F6B;margin-top:4px;}
+.hbadge{font-size:11px;padding:3px 10px;border-radius:12px;display:inline-block;margin-top:6px;background:#E8F0E8;color:#2E4A2E;}
+
+.empty-state{text-align:center;padding:2.5rem 1rem;color:#8C7F6B;font-size:14px;line-height:1.7;}
+
+.toggle-wrap{display:flex;align-items:center;gap:12px;margin-bottom:1.1rem;}
+.toggle-track{width:44px;height:26px;border-radius:13px;background:#DDD5C5;border:1px solid #C8BFAE;position:relative;cursor:pointer;-webkit-tap-highlight-color:transparent;flex-shrink:0;transition:background 0.2s;}
+.toggle-track.on{background:#5C7A5C;border-color:#5C7A5C;}
+.toggle-thumb{width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:2px;left:3px;transition:left 0.2s;}
+.toggle-track.on .toggle-thumb{left:21px;}
+.toggle-label{font-size:13px;color:#7A6F5E;}
+
+.page-header{padding:1.5rem 1.25rem .75rem;}
+.page-title{font-family:Georgia,serif;font-size:24px;font-weight:400;font-style:italic;color:#2E2A22;margin-bottom:4px;}
+.page-sub{font-size:13px;color:#8C7F6B;line-height:1.6;}
+.inner{padding:0 1.25rem;}
+
+.goal-outcome-card{background:#F5EDE0;border-radius:16px;padding:1rem 1.1rem;margin-bottom:1rem;}
+.goal-outcome-title{font-size:13px;color:#4A2E10;margin-bottom:8px;font-weight:500;}
+.goal-outcome-item{font-size:13px;color:#6B4520;padding:4px 0;border-bottom:1px solid #E0C9A8;}
+.goal-outcome-item:last-child{border-bottom:none;}
+
+.pose-pick-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.1rem;}
+.pose-pick{background:#fff;border:1px solid #E8E0D4;border-radius:14px;padding:12px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all 0.18s;}
+.pose-pick:hover{background:#F5F0E8;}
+.pose-pick.sel{border-color:#5C7A5C;background:#E8F0E8;}
+.pose-pick-name{font-family:Georgia,serif;font-size:13px;font-style:italic;color:#2E2A22;}
+.pose-pick.sel .pose-pick-name{color:#2E4A2E;}
+.pose-pick-meta{font-size:11px;color:#8C7F6B;margin-top:3px;}
+</style>
+</head>
+<body>
+
+<!-- dim overlay for coming-up audio -->
+<div class="audio-overlay" id="audio-overlay"></div>
+<!-- toast notification -->
+<div class="coming-up-toast" id="coming-up-toast"></div>
+
+<div class="app">
+
+<div class="screen active" id="home-screen">
+  <div class="hero">
+    <div class="hero-eyebrow">FlowCraft</div>
+    <div class="hero-greeting" id="hero-greeting">Good morning</div>
+    <div class="hero-date" id="hero-date"></div>
+    <div class="hero-tagline">Real yoga, made simple. Tell us how you feel and we'll build your practice right now.</div>
+    <div class="intention-label">How are you feeling?</div>
+    <div class="intention-pills">
+      <div class="int-pill" onclick="pickMood(this,'Calm & grounded','sage')">Calm & grounded</div>
+      <div class="int-pill" onclick="pickMood(this,'Tired & stiff','terra')">Tired & stiff</div>
+      <div class="int-pill" onclick="pickMood(this,'Anxious & tense','sage')">Anxious & tense</div>
+      <div class="int-pill" onclick="pickMood(this,'Energized & ready','terra')">Energized & ready</div>
+      <div class="int-pill" onclick="pickMood(this,'Sore & achy','sage')">Sore & achy</div>
+      <div class="int-pill" onclick="pickMood(this,'Scattered & unfocused','sage')">Scattered & unfocused</div>
+    </div>
+    <button class="hero-cta" id="hero-cta" onclick="goFromMood()" disabled>Build my practice</button>
+  </div>
+  <div class="home-body">
+    <div class="streak-row">
+      <div class="streak-card"><div class="streak-val" id="streak-val">0</div><div class="streak-lbl">day streak</div></div>
+      <div class="streak-card"><div class="streak-val" id="sessions-val">0</div><div class="streak-lbl">sessions</div></div>
+      <div class="streak-card"><div class="streak-val" id="mins-val">0</div><div class="streak-lbl">total min</div></div>
+    </div>
+    <div class="section-label">Jump right in</div>
+    <div class="quick-grid">
+      <div class="quick-card" onclick="startQuick('Hatha',20)"><div class="q-duration">20 min</div><div class="q-type">Hatha</div><div class="q-badge">Great for beginners</div></div>
+      <div class="quick-card" onclick="startQuick('Vinyasa',30)"><div class="q-duration">30 min</div><div class="q-type">Vinyasa</div><div class="q-badge">Get moving</div></div>
+      <div class="quick-card" onclick="startQuick('Yin',45)"><div class="q-duration">45 min</div><div class="q-type">Yin</div><div class="q-badge">Deep stretch</div></div>
+      <div class="quick-card" onclick="startQuick('Restorative',60)"><div class="q-duration">60 min</div><div class="q-type">Restorative</div><div class="q-badge">Full reset</div></div>
+    </div>
+    <div class="divider"><div class="div-line"></div><div class="div-text">or build your own</div><div class="div-line"></div></div>
+    <div class="mode-stack">
+      <div class="mode-row" onclick="showScreen('guided-screen')">
+        <div class="mode-icon-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C7A5C" stroke-width="2" stroke-linecap="round"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg></div>
+        <div><div class="mode-row-title">Build a guided flow</div><div class="mode-row-desc">Choose style, effort level and goals. We handle the sequencing.</div></div>
+      </div>
+      <div class="mode-row" onclick="showScreen('custom-screen')">
+        <div class="mode-icon-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C7A5C" stroke-width="2" stroke-linecap="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+        <div><div class="mode-row-title">Pick your own poses</div><div class="mode-row-desc">Choose what feels good. We handle timing and transitions.</div></div>
+      </div>
+      <div class="mode-row" onclick="showScreen('history-screen')">
+        <div class="mode-icon-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C7A5C" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+        <div><div class="mode-row-title">Session history</div><div class="mode-row-desc">See how consistent you've been.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="guided-screen">
+  <div class="page-header">
+    <div class="page-title">Build your flow</div>
+    <div class="page-sub">Tell us what you need and we'll put together a proper yoga sequence.</div>
+  </div>
+  <div class="inner" style="padding-top:0.5rem;">
+    <div class="section-label">Style of yoga</div>
+    <div class="pill-row">
+      <div class="pill" onclick="gPill(this,'style')">Hatha</div>
+      <div class="pill" onclick="gPill(this,'style')">Vinyasa</div>
+      <div class="pill" onclick="gPill(this,'style')">Yin</div>
+      <div class="pill" onclick="gPill(this,'style')">Restorative</div>
+    </div>
+    <div class="section-label">How hard do you want to work?</div>
+    <div class="intensity-row">
+      <div class="int-card" id="int-gentle" onclick="setInt('gentle')"><div class="int-label">Easy</div><div class="int-desc">Slow and gentle</div></div>
+      <div class="int-card sel-moderate" id="int-moderate" onclick="setInt('moderate')"><div class="int-label">Moderate</div><div class="int-desc">Feels good</div></div>
+      <div class="int-card" id="int-strong" onclick="setInt('strong')"><div class="int-label">Strong</div><div class="int-desc">Push a little</div></div>
+    </div>
+    <div class="section-label">What do you want from this practice?</div>
+    <div class="goal-grid">
+      <div class="goal-card" onclick="toggleGoal(this,'Stress relief')"><div class="goal-title">Stress relief</div><div class="goal-out">Calm your nervous system</div></div>
+      <div class="goal-card" onclick="toggleGoal(this,'Flexibility')"><div class="goal-title">Flexibility</div><div class="goal-out">Loosen up and lengthen</div></div>
+      <div class="goal-card" onclick="toggleGoal(this,'Strength')"><div class="goal-title">Strength</div><div class="goal-out">Build functional strength</div></div>
+      <div class="goal-card" onclick="toggleGoal(this,'Energy')"><div class="goal-title">Energy</div><div class="goal-out">Wake up your body</div></div>
+      <div class="goal-card" onclick="toggleGoal(this,'Balance')"><div class="goal-title">Balance</div><div class="goal-out">Stability and focus</div></div>
+      <div class="goal-card" onclick="toggleGoal(this,'Recovery')"><div class="goal-title">Recovery</div><div class="goal-out">Ease soreness and restore</div></div>
+    </div>
+    <div class="section-label">How long do you have?</div>
+    <div class="slider-row"><label>Practice</label><input type="range" min="20" max="75" step="5" value="30" id="g-flow-sl" oninput="updSl('g-flow-sl','g-flow-v',v=>v+' min')"><span class="slider-val" id="g-flow-v">30 min</span></div>
+    <div class="section-label">Volume</div>
+    <div class="voice-box">
+      <div class="voice-row"><span class="voice-lbl">Volume</span><input type="range" min="1" max="10" step="1" value="9" id="g-vol" oninput="updVol('g-vol','g-vol-v')"><span class="voice-val" id="g-vol-v">90%</span></div>
+    </div>
+    <div class="section-label">Music</div>
+    <div class="pill-row">
+      <div class="pill sel" onclick="gPill(this,'music')">Indie acoustic</div>
+      <div class="pill" onclick="gPill(this,'music')">Relaxing ambiance</div>
+      <div class="pill" onclick="gPill(this,'music')">Chill lofi</div>
+      <div class="pill" onclick="gPill(this,'music')">None</div>
+    </div>
+    <button class="btn-primary" onclick="buildGuided()">Build my practice</button>
+    <button class="btn-secondary" onclick="showScreen('home-screen')">Back</button>
+  </div>
+</div>
+
+<div class="screen" id="custom-screen">
+  <div class="page-header">
+    <div class="page-title">Pick your poses</div>
+    <div class="page-sub">Choose what you want to work on. We handle the timing, both sides, and a proper finish.</div>
+  </div>
+  <div class="inner" style="padding-top:0.5rem;">
+    <div class="section-label">Effort level</div>
+    <div class="intensity-row">
+      <div class="int-card" id="c-int-gentle" onclick="setCInt('gentle')"><div class="int-label">Easy</div><div class="int-desc">Slow and gentle</div></div>
+      <div class="int-card sel-moderate" id="c-int-moderate" onclick="setCInt('moderate')"><div class="int-label">Moderate</div><div class="int-desc">Feels good</div></div>
+      <div class="int-card" id="c-int-strong" onclick="setCInt('strong')"><div class="int-label">Strong</div><div class="int-desc">Push a little</div></div>
+    </div>
+    <div class="section-label">Choose your poses <span id="pose-count" style="font-size:11px;color:#5C7A5C;font-weight:400;text-transform:none;letter-spacing:0;"></span></div>
+    <div class="pose-pick-grid" id="pose-pick-grid"></div>
+    <div class="section-label">How long?</div>
+    <div class="slider-row"><label>Total time</label><input type="range" min="10" max="75" step="5" value="30" id="c-len-sl" oninput="updSl('c-len-sl','c-len-v',v=>v+' min')"><span class="slider-val" id="c-len-v">30 min</span></div>
+    <div class="section-label">Volume</div>
+    <div class="voice-box">
+      <div class="voice-row"><span class="voice-lbl">Volume</span><input type="range" min="1" max="10" step="1" value="9" id="c-vol" oninput="updVol('c-vol','c-vol-v')"><span class="voice-val" id="c-vol-v">90%</span></div>
+    </div>
+    <div class="section-label">Music</div>
+    <div class="pill-row">
+      <div class="pill sel" onclick="cPill(this,'music')">Indie acoustic</div>
+      <div class="pill" onclick="cPill(this,'music')">Relaxing ambiance</div>
+      <div class="pill" onclick="cPill(this,'music')">Chill lofi</div>
+      <div class="pill" onclick="cPill(this,'music')">None</div>
+    </div>
+    <button class="btn-primary" onclick="buildCustom()">Build my practice</button>
+    <button class="btn-secondary" onclick="showScreen('home-screen')">Back</button>
+  </div>
+</div>
+
+<div class="screen" id="preview-screen">
+  <div class="page-header"><div class="page-title" id="preview-title"></div><div class="page-sub" id="preview-sub"></div></div>
+  <div class="inner">
+    <div id="goal-outcome-block" style="display:none;" class="goal-outcome-card">
+      <div class="goal-outcome-title" id="goal-outcome-title"></div>
+      <div id="goal-outcome-items"></div>
+    </div>
+    <div id="sc-preview-block"></div>
+    <div class="section-label">Your session at a glance</div>
+    <div class="summary-card" id="summary-card"></div>
+    <div class="section-label">Pose sequence</div>
+    <div class="pose-list-preview" id="pose-list"></div>
+    <button class="btn-primary" onclick="goToReady()">I'm ready — let's go</button>
+    <button class="btn-secondary" onclick="goBack()">Make changes</button>
+  </div>
+</div>
+
+<div class="screen" id="ready-screen">
+  <div class="ready-wrap">
+    <div class="ready-eyebrow">You're all set</div>
+    <div class="ready-first" id="ready-first-pose"></div>
+    <div class="ready-meta" id="ready-meta"></div>
+    <button class="play-btn" onclick="beginCountdown()">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg>
+    </button>
+    <div class="ready-hint">Get on your mat, then press play</div>
+  </div>
+</div>
+
+<div class="screen" id="countdown-screen">
+  <div class="countdown-wrap">
+    <div style="font-size:13px;color:#A89880;margin-bottom:1.5rem;letter-spacing:0.04em;">Starting in</div>
+    <div class="cd-num" id="cd-num">3</div>
+    <div class="cd-pose" id="cd-pose"></div>
+    <div class="cd-phase" id="cd-phase"></div>
+  </div>
+</div>
+
+<div class="screen" id="session-screen">
+  <div class="sess-topbar">
+    <div class="sess-title-row">
+      <div class="sess-title-txt" id="sess-title"></div>
+      <div class="sess-counter" id="sess-counter"></div>
+    </div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div class="phase-banner">
+    <span id="phase-text"></span>
+    <span class="side-indicator" id="side-indicator" style="display:none;"></span>
+  </div>
+  <div class="sc-session" id="sc-session-block"></div>
+  <div class="pose-card">
+    <div class="pose-card-name" id="curr-name"></div>
+    <div class="pose-card-timer" id="curr-timer"></div>
+    <div class="cue-block">
+      <div class="cue-row"><div class="cue-label">What to do</div><div class="cue-text" id="cue-form"></div></div>
+      <div class="cue-row"><div class="cue-label">How to breathe</div><div class="cue-text" id="cue-breath"></div></div>
+      <div class="cue-row" id="cue-side-row" style="display:none;"><div class="cue-label">Don't forget</div><div class="cue-text" id="cue-side"></div></div>
+    </div>
+    <div class="bilateral-banner" id="bilateral-banner" style="display:none;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B2E14" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      <div class="bilateral-text" id="bilateral-text"></div>
+    </div>
+  </div>
+  <div class="next-card">
+    <div class="next-label">Up next</div>
+    <div class="next-name" id="next-name"></div>
+  </div>
+  <div class="controls">
+    <button class="ctrl-btn" onclick="prevPose()">Back</button>
+    <button class="ctrl-btn main" id="pause-btn" onclick="togglePause()">Pause</button>
+    <button class="ctrl-btn" onclick="nextPose()">Skip</button>
+  </div>
+  <div class="inner" style="margin-top:8px;"><button class="btn-secondary" onclick="endSession()">End session</button></div>
+</div>
+
+<div class="screen" id="history-screen">
+  <div class="page-header">
+    <div class="page-title">Your history</div>
+    <div class="page-sub">Every session counts — even the short ones.</div>
+  </div>
+  <div class="inner" style="padding-top:1rem;" id="history-list"></div>
+  <div class="inner"><button class="btn-secondary" onclick="showScreen('home-screen')">Back</button></div>
+</div>
+
+</div>
+<script>
+// ─── COMING UP AUDIO FILE MAP ───────────────────────────────────────────────
+const comingUpFiles={
+  'Easy seat':null,
+  'Neck rolls':'coming-up-neck-rolls.mp3',
+  'Seated cat-cow':'coming-up-seated-catcow.mp3',
+  'Cat-cow on hands and knees':'coming-up-catcow-hands-knees.mp3',
+  'Thread the needle (right)':'coming-up-threadneedle.mp3',
+  'Thread the needle (left)':'coming-up-threadneedle.mp3',
+  "Child's pose":'coming-up-childs-pose.mp3',
+  "Child's pose rest":'coming-up-childs-pose.mp3',
+  'Mountain pose':'coming-up-mountain.mp3',
+  'Forward fold':'coming-up-forwardfold.mp3',
+  'Low lunge (right side)':'coming-up-lowlunge.mp3',
+  'Low lunge (left side)':'coming-up-lowlunge.mp3',
+  'Warrior I (right)':'coming-up-warrior1.mp3',
+  'Warrior I (left)':'coming-up-warrior1.mp3',
+  'Warrior II (right)':'coming-up-warrior2.mp3',
+  'Warrior II (left)':'coming-up-warrior2.mp3',
+  'Reverse warrior (right)':'coming-up-reversewarrior.mp3',
+  'Reverse warrior (left)':'coming-up-reversewarrior.mp3',
+  'Triangle (right)':'coming-up-triangle.mp3',
+  'Triangle (left)':'coming-up-triangle.mp3',
+  'Tree pose (right)':'coming-up-treepose.mp3',
+  'Tree pose (left)':'coming-up-treepose.mp3',
+  'Seated forward fold':'coming-up-seatedforward-fold.mp3',
+  'Supine twist (right)':'coming-up-supine-twist.mp3',
+  'Supine twist (left)':'coming-up-supine-twist.mp3',
+  'Happy baby':'coming-up-happybaby.mp3',
+  'Savasana':'coming-up-savasana.mp3',
+  'Downward dog':'coming-up-childs-pose.mp3',
+  'Sun salutation round 1':'coming-up-sunsal1.mp3',
+  'Sun salutation round 2':'coming-up-sunsal2.mp3',
+  'Step back to downward dog':null,
+  'Chair pose':'coming-up-chair-pose.mp3',
+  'Pigeon (right hip)':'coming-up-pigeonpose.mp3',
+  'Pigeon (left hip)':'coming-up-pigeonpose.mp3',
+  'Bridge pose':'coming-up-bridge-pose.mp3',
+  'Butterfly':'coming-up-butterfly.mp3',
+  'Sleeping swan (right hip)':'coming-up-pigeonpose.mp3',
+  'Sleeping swan (left hip)':'coming-up-pigeonpose.mp3',
+  'Dragon (right)':'coming-up-dragon.mp3',
+  'Dragon (left)':'coming-up-dragon.mp3',
+  'Caterpillar':'coming-up-caterpillar.mp3',
+  'Sphinx':'coming-up-sphinx.mp3',
+  'Legs up the wall':'coming-up-legs-upwall.mp3',
+  "Supported child's pose":'coming-up-supportedchilds.mp3',
+  "Supported child's pose (other side)":'coming-up-supportedchilds.mp3',
+  'Supported fish':'coming-up-supportedfish.mp3',
+  'Supported bridge':'coming-up-supportedbridge.mp3',
+  'Reclined bound angle':'coming-up-reclinedboundangle.mp3',
+  'Supported savasana':'coming-up-supportedsavasana.mp3'
+};
+
+// ─── PLAY COMING UP AUDIO WITH ANIMATION ────────────────────────────────────
+function playComingUp(poseName,vol){
+  const file=comingUpFiles[poseName];
+  if(!file)return;
+  const audio=new Audio('audio/'+file);
+  audio.volume=Math.min(1,vol/10);
+
+  // show overlay dim + toast
+  const overlay=document.getElementById('audio-overlay');
+  const toast=document.getElementById('coming-up-toast');
+  toast.textContent='Coming up: '+poseName.replace(/ \(.*\)/,'');
+  overlay.classList.add('active');
+  toast.classList.add('show');
+
+  audio.play().catch(()=>{});
+  audio.onended=()=>{
+    overlay.classList.remove('active');
+    toast.classList.remove('show');
+  };
+  // fallback hide after 5s
+  setTimeout(()=>{
+    overlay.classList.remove('active');
+    toast.classList.remove('show');
+  },5000);
+}
+
+// ─── SOUNDCLOUD ──────────────────────────────────────────────────────────────
+const scPlaylists={
+  'Indie acoustic':{url:'https://soundcloud.com/oscar-bg-1/sets/yoga-flow-yoga-music-playlist',label:'Yoga Flow — Indie Acoustic'},
+  'Relaxing ambiance':{url:'https://soundcloud.com/soundcloud-circuits/sets/downward-ambient-for-yoga',label:'Ambient for Yoga'},
+  'Chill lofi':{url:'https://soundcloud.com/lofi_girl/sets/synthwave-ambient-chill-music',label:'Synth Ambient — Lofi Girl'}
+};
+function scEmbedHTML(music){
+  const p=scPlaylists[music];
+  if(!p)return'';
+  return`<iframe height="80" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=${encodeURIComponent(p.url)}&color=%235C7A5C&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false"></iframe>`;
+}
+
+// ─── POSE DATA ───────────────────────────────────────────────────────────────
+const flows={
+  Hatha:{moderate:[
+    {name:"Easy seat",phase:"Opening",side:"both",form:"Sit cross-legged on the floor. Sit up tall and rest your hands on your knees. Close your eyes.",breath:"Breathe in slowly for 4 counts. Breathe out for 6.",bilateral:null,dur:90},
+    {name:"Neck rolls",phase:"Opening",side:"both",form:"Relax your shoulders. Slowly drop your right ear toward your right shoulder, roll your chin to your chest, then your left ear toward your left shoulder.",breath:"Breathe out as you move into each side. Breathe in as you return to centre.",bilateral:"3 slow rolls each direction.",dur:60},
+    {name:"Seated cat-cow",phase:"Warm-up",side:"both",form:"Hands on knees. Breathe in and lift your chest, arch your back. Breathe out and round your back, chin toward chest. Keep flowing.",breath:"In = chest opens. Out = back rounds. Let the breath lead.",bilateral:null,dur:60},
+    {name:"Cat-cow on hands and knees",phase:"Warm-up",side:"both",form:"All fours — wrists under shoulders, knees under hips. In = belly drops, head and bum lift. Out = push your back up toward the ceiling, tuck your chin.",breath:"In = belly drops. Out = back rounds up. 8 rounds.",bilateral:null,dur:60},
+    {name:"Thread the needle (right)",phase:"Warm-up",side:"right",form:"From all fours, slide your right arm under your left arm along the floor, palm up. Rest your right cheek on the mat. Keep hips over knees.",breath:"Every exhale, let your shoulder get heavier on the floor.",bilateral:"Hold here, then switch to the left.",dur:45},
+    {name:"Thread the needle (left)",phase:"Warm-up",side:"left",form:"Left arm slides under right. Left cheek rests on the mat. Hips stay stacked over knees.",breath:"Long slow exhales. Let everything soften.",bilateral:null,dur:45},
+    {name:"Child's pose",phase:"Warm-up",side:"both",form:"Sit hips back toward your heels, knees wide or together. Walk hands forward until your forehead rests on the mat. Complete rest.",breath:"Breathe into your back. Feel your ribs expand outward.",bilateral:null,dur:60},
+    {name:"Mountain pose",phase:"Standing",side:"both",form:"Stand feet hip-width apart. Press all four corners of each foot into the floor. Arms hang naturally, palms face forward.",breath:"Breathe naturally. This is your foundation.",bilateral:null,dur:40},
+    {name:"Forward fold",phase:"Standing",side:"both",form:"From standing, bend your knees slightly and fold your upper body down. Let your head hang completely heavy.",breath:"Every exhale, ease a little further down.",bilateral:null,dur:45},
+    {name:"Low lunge (right side)",phase:"Standing",side:"right",form:"Step right foot forward between your hands. Lower your left knee. Right knee above right ankle. Sink your hips — arms sweep overhead.",breath:"In = reach up. Out = hips melt lower.",bilateral:"Right side first, then switch to the left.",dur:60},
+    {name:"Low lunge (left side)",phase:"Standing",side:"left",form:"Left foot forward, right knee lowers. Front knee stays above ankle. Hips sink. Arms can reach up.",breath:"In = get tall. Out = hips melt toward the mat.",bilateral:null,dur:60},
+    {name:"Warrior II (right)",phase:"Standing",side:"right",form:"Feet wide apart. Right foot points forward, left foot turns in. Bend right knee over right ankle. Arms stretch out wide, look over your right hand.",breath:"Breathe into your chest. 5 slow breaths.",bilateral:"Hold right then switch to the left.",dur:50},
+    {name:"Warrior II (left)",phase:"Standing",side:"left",form:"Left foot forward, right foot turns in. Bend left knee over left ankle. Arms reach wide. Look over your left hand.",breath:"Steady breath. 5 full breaths.",bilateral:null,dur:50},
+    {name:"Triangle (right)",phase:"Standing",side:"right",form:"Legs wide, both straight. Right foot out. Reach your right arm forward then tilt sideways — hand to shin or floor, left arm reaches up.",breath:"In = get longer. Out = open your chest more.",bilateral:"Right then left.",dur:45},
+    {name:"Triangle (left)",phase:"Standing",side:"left",form:"Left foot out. Reach left arm forward, tilt sideways. Right arm reaches up. Open your chest.",breath:"In = lengthen. Out = open.",bilateral:null,dur:45},
+    {name:"Tree pose (right)",phase:"Standing",side:"right",form:"Stand on your left foot. Right foot rests on left calf or inner thigh — never the knee. Find one spot to stare at. Hands at chest or arms overhead.",breath:"Slow steady breath. Wobbling is totally normal.",bilateral:"Right then left.",dur:45},
+    {name:"Tree pose (left)",phase:"Standing",side:"left",form:"Stand on your right foot. Left foot to calf or inner thigh. Find your stare point.",breath:"Even breath. The breath helps you balance.",bilateral:null,dur:45},
+    {name:"Seated forward fold",phase:"Floor",side:"both",form:"Sit with legs out straight, feet flexed. Sit tall first, then hinge forward from your hips and reach toward your feet.",breath:"Every exhale, ease forward a little more. No forcing.",bilateral:null,dur:75},
+    {name:"Supine twist (right)",phase:"Floor",side:"right",form:"Lie on your back. Hug your right knee to your chest, then guide it across to the left. Stretch your right arm out. Keep both shoulders on the mat.",breath:"Exhale into the twist. Let gravity do the work.",bilateral:"Right then left.",dur:50},
+    {name:"Supine twist (left)",phase:"Floor",side:"left",form:"Left knee hugs in, crosses to the right. Left arm out. Both shoulders stay grounded.",breath:"Long slow exhales. Let everything melt.",bilateral:null,dur:50},
+    {name:"Happy baby",phase:"Floor",side:"both",form:"Lie on your back, bend both knees toward your chest. Grab the outside edges of your feet or shins. Let knees fall wide and gently rock side to side.",breath:"Natural easy breath. Rock with it.",bilateral:null,dur:45},
+    {name:"Savasana",phase:"Closing",side:"both",form:"Lie flat. Legs fall open, arms rest slightly away from body, palms up. Eyes closed. Nothing to do — just rest.",breath:"Don't control your breath. Just let it happen.",bilateral:null,dur:180}
+  ]},
+  Vinyasa:{moderate:[
+    {name:"Child's pose",phase:"Opening",side:"both",form:"Start here. Bum toward heels, knees wide, forehead on the mat, arms forward. Take 5 slow breaths before anything else.",breath:"Slow breath in. Long breath out. Arrive.",bilateral:null,dur:60},
+    {name:"Cat-cow on hands and knees",phase:"Warm-up",side:"both",form:"On hands and knees. In = belly drops, chest lifts. Out = push floor away, round your back up, chin tucks. Flow 6 times.",breath:"The breath leads. Don't move until you breathe.",bilateral:null,dur:60},
+    {name:"Downward dog",phase:"Warm-up",side:"both",form:"Tuck toes, press hands into floor and lift hips up and back into an upside-down V. Spread fingers and pedal your feet slowly.",breath:"5 full breaths. In = get longer. Out = push hips higher.",bilateral:null,dur:45},
+    {name:"Sun salutation round 1",phase:"Flow",side:"both",form:"Stand tall → fold forward → lift chest halfway → plank → lower down slowly → cobra → downward dog → walk feet to hands → stand. Go slowly.",breath:"One breath per movement. Don't rush.",bilateral:null,dur:90},
+    {name:"Sun salutation round 2",phase:"Flow",side:"both",form:"Same sequence again. Start to find a rhythm. Breath leads every movement.",breath:"Out to fold or lower. In to lift or open.",bilateral:null,dur:75},
+    {name:"Warrior I (right)",phase:"Flow",side:"right",form:"From downward dog, step right foot forward. Back heel presses down at an angle. Bend right knee and sweep arms up overhead.",breath:"In = arms sweep up and you grow tall. Out = sink the front knee deeper.",bilateral:"Right then left.",dur:40},
+    {name:"Warrior II (right)",phase:"Flow",side:"right",form:"Open arms and hips to face the side. Right knee stays bent over right ankle. Both arms reach out strongly. Look over your right hand.",breath:"Breathe into your chest. 4 steady breaths.",bilateral:null,dur:35},
+    {name:"Reverse warrior (right)",phase:"Flow",side:"right",form:"Flip your right palm up. Slide left hand down left leg. Arc your right arm up and overhead. Feel the whole right side open.",breath:"In = arc up and lengthen. Out = hold and breathe into your side.",bilateral:null,dur:30},
+    {name:"Step back to downward dog",phase:"Flow",side:"both",form:"Hands to floor, step both feet back, lift hips. This is your reset between sides.",breath:"Out = step back. In = open chest. Out = hips high.",bilateral:null,dur:30},
+    {name:"Warrior I (left)",phase:"Flow",side:"left",form:"Step left foot forward. Right heel down at an angle. Bend left knee. Arms sweep up.",breath:"In = get tall. Out = sink deeper.",bilateral:null,dur:40},
+    {name:"Warrior II (left)",phase:"Flow",side:"left",form:"Open arms and hips to the side. Left knee over left ankle. Look over your left hand.",breath:"4 steady breaths. Feel your legs.",bilateral:null,dur:35},
+    {name:"Reverse warrior (left)",phase:"Flow",side:"left",form:"Flip left palm up. Right hand slides down right leg. Arc left arm overhead.",breath:"In = lengthen. Out = breathe into your left side.",bilateral:null,dur:30},
+    {name:"Triangle (right)",phase:"Flow",side:"right",form:"Straighten front leg. Reach right arm forward then tilt sideways — hand to shin or floor, left arm up. Open your chest to the ceiling.",breath:"In = get longer. Out = open more.",bilateral:"Right then left.",dur:40},
+    {name:"Triangle (left)",phase:"Flow",side:"left",form:"Left foot forward. Reach left arm forward, tilt sideways. Right arm up. Open your chest.",breath:"In = lengthen. Out = open.",bilateral:null,dur:40},
+    {name:"Chair pose",phase:"Flow",side:"both",form:"Feet together or hip-width. Bend knees and sit hips back like you're sitting in a chair behind you. Arms reach up.",breath:"Breathe through the burn. 5 breaths.",bilateral:null,dur:40},
+    {name:"Child's pose rest",phase:"Floor",side:"both",form:"From downward dog, lower your knees and sink back into child's pose. You've earned this.",breath:"Long exhales. Let your body settle.",bilateral:null,dur:35},
+    {name:"Pigeon (right hip)",phase:"Floor",side:"right",form:"Bring right knee toward right hand, shin rests on floor in front of you. Left leg slides back. Stay upright or fold over front leg.",breath:"8 long slow breaths. Every exhale, let the outer hip soften.",bilateral:"Right hip first, then left.",dur:75},
+    {name:"Pigeon (left hip)",phase:"Floor",side:"left",form:"Left shin forward, right leg back. Support left hip if needed. Fold forward.",breath:"8 breaths. Same care as the right side.",bilateral:null,dur:75},
+    {name:"Seated forward fold",phase:"Floor",side:"both",form:"Both legs out straight, feet flexed. Sit tall first, then fold forward. Hold wherever you reach without straining.",breath:"Out = ease further. No bouncing.",bilateral:null,dur:60},
+    {name:"Bridge pose",phase:"Floor",side:"both",form:"Lie on your back, knees bent, feet flat hip-width apart. Press through your feet and lift your hips. Clasp hands under you if comfortable.",breath:"In = lift a little higher. Out = hold. 5 breaths then lower slowly.",bilateral:null,dur:50},
+    {name:"Supine twist (right)",phase:"Floor",side:"right",form:"Right knee hugs in then crosses to the left. Right arm out. Both shoulders stay on the mat.",breath:"Out = melt into the twist. Let gravity do it.",bilateral:"Both sides.",dur:45},
+    {name:"Supine twist (left)",phase:"Floor",side:"left",form:"Left knee hugs in, crosses to the right. Left arm out. Shoulders grounded.",breath:"Long slow exhales.",bilateral:null,dur:45},
+    {name:"Savasana",phase:"Closing",side:"both",form:"Lie flat. Feet fall open, palms face up, eyes close. Don't skip this — it's where the benefits land.",breath:"No control. Just let your breath be.",bilateral:null,dur:180}
+  ]},
+  Yin:{moderate:[
+    {name:"Child's pose",phase:"Opening",side:"both",form:"Start here. Bum toward heels, forehead on the mat, arms forward or by your sides. Don't move for at least 5 slow breaths.",breath:"Slow breath in. Long breath out. You're here now.",bilateral:null,dur:120},
+    {name:"Butterfly",phase:"Hips",side:"both",form:"Sit on the floor. Soles of feet together, knees fall open. Let them drop without pushing. Hold your feet and let your back round forward, head hangs.",breath:"Every exhale, soften a little more. The first minute is the hardest.",bilateral:null,dur:240},
+    {name:"Sleeping swan (right hip)",phase:"Hips",side:"right",form:"Bring right knee toward right hand, right shin on the floor. Left leg slides back. Fold over front leg and rest your forehead down.",breath:"8 to 10 slow breaths. Breathe into the outer hip.",bilateral:"Right hip first, then the same on the left.",dur:270},
+    {name:"Sleeping swan (left hip)",phase:"Hips",side:"left",form:"Left shin forward, right leg back. Support left hip if needed. Fold forward.",breath:"8 to 10 breaths. Same patience as the right.",bilateral:null,dur:270},
+    {name:"Dragon (right)",phase:"Hips",side:"right",form:"Step right foot between your hands into a low lunge. Left knee lowers. Option to lower forearms to the floor. Let gravity work over time.",breath:"10 slow breaths. Every exhale, let the front of the left hip soften.",bilateral:"Right then left.",dur:270},
+    {name:"Dragon (left)",phase:"Hips",side:"left",form:"Left foot forward, right knee down. Forearms to floor if comfortable. Same slow surrender.",breath:"10 slow breaths. Let gravity do the work.",bilateral:null,dur:270},
+    {name:"Caterpillar",phase:"Spine",side:"both",form:"Sit with both legs out straight. Let your back round forward intentionally — this is correct in yin. Head hangs, reach for feet or let hands rest.",breath:"Every exhale, soften. Let your body be heavy. 10 or more breaths.",bilateral:null,dur:270},
+    {name:"Sphinx",phase:"Spine",side:"both",form:"Lie on your belly. Forearms on the floor, elbows under shoulders. Press pelvis and legs into the floor and gently lift your chest.",breath:"Slow even breath. Let the pose do its work.",bilateral:null,dur:180},
+    {name:"Supine twist (right)",phase:"Spine",side:"right",form:"Lie on your back. Hug both knees to chest, then let them drop to the right. Arms out to the sides, shoulders stay on the mat.",breath:"Exhale and melt. No muscular effort — just gravity.",bilateral:"Right then left.",dur:180},
+    {name:"Supine twist (left)",phase:"Spine",side:"left",form:"Knees drop to the left. Arms out. Shoulders stay grounded.",breath:"Long slow exhales. Breathing is the whole job.",bilateral:null,dur:180},
+    {name:"Legs up the wall",phase:"Closing",side:"both",form:"Shuffle your hips close to a wall and let your legs rest against it. Body makes an L shape. Completely passive.",breath:"Natural slow breath. No effort at all.",bilateral:null,dur:240},
+    {name:"Savasana",phase:"Closing",side:"both",form:"Lie flat, legs fall open, palms face up, eyes closed. Stay for at least 5 minutes — the stillness is the point.",breath:"No control. Just witness your breath.",bilateral:null,dur:300}
+  ]},
+  Restorative:{moderate:[
+    {name:"Supported child's pose",phase:"Opening",side:"both",form:"Place a pillow between your knees. Lower your torso onto it so your chest and belly are supported. Turn your head to one side.",breath:"Long slow exhales. No effort — just let it come.",bilateral:null,dur:300},
+    {name:"Supported child's pose (other side)",phase:"Opening",side:"both",form:"Turn your head to the other direction. Equal time on each side so your neck doesn't get stiff.",breath:"Keep the long slow exhales going.",bilateral:"Turn your head to the other side now.",dur:180},
+    {name:"Supported fish",phase:"Heart opening",side:"both",form:"Place a pillow lengthwise along your spine. Sit in front of it, then lower your back onto it from lower back to head. Arms open wide at sides, palms up.",breath:"Breathe into your whole chest and belly. In = expand. Out = soften.",bilateral:null,dur:360},
+    {name:"Supported bridge",phase:"Pelvis",side:"both",form:"Lie on your back, knees bent, feet flat. Press up to lift hips then slide a block or folded blanket under your lower back. Lower your hips onto the support.",breath:"Let your belly rise and fall naturally.",bilateral:null,dur:300},
+    {name:"Reclined bound angle",phase:"Hips",side:"both",form:"Lie on your back. Soles of feet together, knees fall open. Put pillows under your knees if needed. Arms rest open at sides.",breath:"Every exhale = more letting go.",bilateral:null,dur:420},
+    {name:"Legs up the wall",phase:"Nervous system",side:"both",form:"Shuffle your hips to a wall. Legs rest against it vertically. Completely passive — one of the most calming things you can do for your nervous system.",breath:"Completely natural. Your only job is to do nothing.",bilateral:null,dur:360},
+    {name:"Supported savasana",phase:"Closing",side:"both",form:"Pillow under knees, blanket over you, something small under your neck. Arms slightly away from body, eyes closed. Complete rest.",breath:"No technique. No control. Just rest.",bilateral:null,dur:420}
+  ]}
+};
+
+const allCustomPoses=[
+  {name:"Mountain pose",category:"Standing",side:"both",form:"Stand tall, feet hip-width. Press all four corners of each foot into the floor. Arms at sides, palms forward.",breath:"Breathe naturally. Feel grounded and tall."},
+  {name:"Forward fold",category:"Standing",side:"both",form:"From standing, bend knees slightly and fold your upper body down. Let your head hang completely heavy.",breath:"Every exhale, ease a little further down."},
+  {name:"Low lunge",category:"Lunge",side:"bilateral",form:"Step one foot forward between your hands. Lower the back knee. Front knee above front ankle, hips sink down.",breath:"In = grow tall. Out = sink hips lower."},
+  {name:"Warrior I",category:"Standing",side:"bilateral",form:"Front knee bends, back heel presses down at an angle. Hips face forward. Arms sweep overhead.",breath:"In = arms lift and you grow tall. Out = front knee sinks deeper."},
+  {name:"Warrior II",category:"Standing",side:"bilateral",form:"Feet wide. Front knee bends over front ankle. Arms stretch out to both sides. Look over your front hand.",breath:"Breathe into your chest. 5 steady breaths."},
+  {name:"Warrior III",category:"Balance",side:"bilateral",form:"From standing, hinge forward and lift one leg back until your body makes a T shape. Arms reach forward or rest at sides.",breath:"Slow steady breath. The exhale helps you balance."},
+  {name:"Triangle",category:"Standing",side:"bilateral",form:"Legs wide, both straight. Reach forward arm as far as you can, then tilt sideways. Hand to shin or floor. Other arm reaches up.",breath:"In = lengthen. Out = open your chest more."},
+  {name:"Downward dog",category:"Core",side:"both",form:"Hands and feet on the floor, hips push up to make an upside-down V. Spread your fingers and pedal your feet.",breath:"5 full breaths. In = get longer. Out = hips higher."},
+  {name:"Plank",category:"Core",side:"both",form:"Like the top of a push-up. Hands under shoulders, body in a straight line. Don't let your hips sag or rise.",breath:"Breathe steadily through the hold. Don't hold your breath."},
+  {name:"Chaturanga",category:"Core",side:"both",form:"From plank, bend your elbows keeping them close to your ribs. Lower your body slowly like a controlled push-up.",breath:"Exhale to lower. Go slowly."},
+  {name:"Cobra",category:"Backbend",side:"both",form:"Lie on your belly, hands beside your ribs. Press down gently and lift your chest a few inches. Back muscles do the work.",breath:"In = lift your chest. Out = hold gently."},
+  {name:"Upward dog",category:"Backbend",side:"both",form:"From lying on your belly, roll over your toes, press hands into floor, lift hips and thighs off the mat. Chest opens forward and up.",breath:"In = open and lift. Out = hold."},
+  {name:"Camel pose",category:"Backbend",side:"both",form:"Kneel with hips over knees. Hands on your lower back, gently lean back, chest lifts up. Reach hands toward heels if comfortable.",breath:"In = open your chest. Out = hold steady."},
+  {name:"Bow pose",category:"Backbend",side:"both",form:"Lie on your belly, bend your knees and reach back to hold your ankles. Press your feet into your hands to lift your chest and thighs.",breath:"In = lift higher. Out = hold. 5 breaths."},
+  {name:"Pigeon",category:"Hip opener",side:"bilateral",form:"From hands and knees, bring one knee forward toward that hand. Other leg slides back. Stay upright or fold over front leg.",breath:"8 long slow breaths. Every exhale, let the outer hip release."},
+  {name:"Butterfly",category:"Hip opener",side:"both",form:"Sit on the floor. Soles of feet together, knees fall open. Hold your feet and let your back round, head hangs.",breath:"Every exhale, soften a little more."},
+  {name:"Seated forward fold",category:"Hip & hamstring",side:"both",form:"Both legs out straight, feet flexed. Sit tall first, then fold forward from hips. Hold wherever you comfortably reach.",breath:"Every exhale, ease forward a little more."},
+  {name:"Supine twist",category:"Twist",side:"bilateral",form:"Lie on your back. Hug one knee to your chest then let it cross to the opposite side. Other arm stretches out, shoulders stay on the mat.",breath:"Exhale into the twist. Let gravity do it."},
+  {name:"Half pigeon",category:"Hip opener",side:"bilateral",form:"Like pigeon but with your front shin more angled. Keep hips as square as possible. Stay upright or fold forward.",breath:"Long slow exhales into the outer hip."},
+  {name:"Seated spinal twist",category:"Twist",side:"bilateral",form:"Sit with legs extended. Bend one knee, place that foot outside the opposite thigh. Sit tall and twist toward the bent knee.",breath:"In = sit taller. Out = twist a little more."},
+  {name:"Legs up the wall",category:"Restorative",side:"both",form:"Shuffle hips to a wall. Let your legs rest against it. Body makes an L shape. Completely passive.",breath:"Natural slow breath. No effort at all."},
+  {name:"Child's pose",category:"Restorative",side:"both",form:"Sit hips toward heels, knees wide or together. Walk hands forward, forehead to mat. Complete rest.",breath:"Breathe into your back. Ribs expand outward."},
+  {name:"Supported bridge",category:"Restorative",side:"both",form:"Lift hips and slide a block or pillow under your lower back. Lower down onto the support and let your body relax completely.",breath:"Let your belly rise and fall naturally."},
+  {name:"Tree pose",category:"Balance",side:"bilateral",form:"Stand on one foot. Other foot rests on calf or inner thigh — never the knee. Find one spot to stare at.",breath:"Slow steady breath. Wobbling is normal — keep breathing."},
+  {name:"Eagle pose",category:"Balance",side:"bilateral",form:"Bend your knees slightly. Cross one thigh over the other and wrap your arms — one under, one over. Squeeze everything toward centre.",breath:"Steady breath. Stay for 5 breaths then unwind slowly."},
+  {name:"Bridge pose",category:"Backbend",side:"both",form:"Lie on your back, knees bent, feet flat hip-width apart. Press through your feet and lift your hips. Clasp hands under you.",breath:"In = lift a little higher. Out = hold. 5 breaths, lower slowly."},
+  {name:"Happy baby",category:"Hip opener",side:"both",form:"Lie on your back, bend both knees toward your chest. Grab outside edges of feet or shins. Let knees fall wide and rock gently.",breath:"Natural easy breath. Rock with it."},
+  {name:"Reclined hero",category:"Hip flexors",side:"both",form:"Kneel then slowly lower your back toward the floor, only as far as comfortable. Arms rest overhead or at sides.",breath:"Slow breaths into the front of your body."},
+  {name:"Sphinx",category:"Backbend",side:"both",form:"Lie on your belly, forearms on the floor with elbows under shoulders. Press pelvis down and gently lift your chest. Relax your face.",breath:"Slow even breath. Let the pose work."},
+  {name:"Savasana",category:"Closing",side:"both",form:"Lie flat. Feet fall open, palms face up, eyes close. Nothing to do — just let your body be completely heavy.",breath:"Don't control your breath. Just let it happen."}
+];
+
+const moodMap={
+  'Calm & grounded':{style:'Hatha',intensity:'moderate'},
+  'Tired & stiff':{style:'Restorative',intensity:'moderate'},
+  'Anxious & tense':{style:'Yin',intensity:'moderate'},
+  'Energized & ready':{style:'Vinyasa',intensity:'moderate'},
+  'Sore & achy':{style:'Restorative',intensity:'moderate'},
+  'Scattered & unfocused':{style:'Yin',intensity:'moderate'}
+};
+
+const goalOutcomes={
+  'Stress relief':['Calms your nervous system','Lowers stress hormones','Helps you sleep better','Switches off fight-or-flight'],
+  'Flexibility':['Lengthens tight muscles','Opens up your range of motion','Releases chronic tightness','Gets stiff joints moving'],
+  'Strength':['Builds real functional strength','Improves your posture','Increases muscular endurance','Supports your joints'],
+  'Energy':['Gets your blood moving','Wakes up your body','Sharpens your focus','Leaves you feeling more alive'],
+  'Balance':['Improves body awareness','Sharpens coordination','Builds single-leg strength','Connects mind and body'],
+  'Recovery':['Eases sore muscles','Reduces inflammation','Restores your range of motion','Helps your body repair']
+};
+
+const customDur={gentle:90,moderate:45,strong:30};
+
+let gS={style:'Hatha',intensity:'moderate',goals:[],flowMins:30,voiceVol:9,music:'Indie acoustic'};
+let cS={intensity:'moderate',selectedPoses:[],lenMins:30,voiceVol:9,music:'Indie acoustic'};
+let sess={poseList:[],poseIdx:0,paused:false,interval:null,poseTime:0,start:null,voiceVol:9,music:''};
+let history=[];
+let lastMode='guided';
+let selectedMood='';
+
+// ─── NO SPEECH SYNTHESIS — removed entirely ──────────────────────────────────
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(id==='history-screen')renderHistory();
+  window.scrollTo(0,0);
+}
+
+function pickMood(el,mood,type){
+  document.querySelectorAll('.int-pill').forEach(p=>p.className='int-pill');
+  el.classList.add('mood-sel-'+type);
+  selectedMood=mood;
+  document.getElementById('hero-cta').disabled=false;
+}
+
+function goFromMood(){
+  if(!selectedMood)return;
+  const m=moodMap[selectedMood];
+  gS.style=m.style;gS.intensity=m.intensity;gS.goals=[];gS.flowMins=30;
+  buildGuided();
+}
+
+function updSl(sid,vid,fmt){
+  const v=+document.getElementById(sid).value;
+  document.getElementById(vid).textContent=fmt(v);
+  if(sid==='g-flow-sl')gS.flowMins=v;
+  if(sid==='c-len-sl')cS.lenMins=v;
+}
+
+function updVol(sid,vid){
+  const v=+document.getElementById(sid).value;
+  document.getElementById(vid).textContent=Math.round(v*10)+'%';
+  if(sid==='g-vol')gS.voiceVol=v;else cS.voiceVol=v;
+}
+
+function gPill(el,g){
+  el.parentElement.querySelectorAll('.pill').forEach(p=>p.classList.remove('sel'));
+  el.classList.add('sel');
+  if(g==='style')gS.style=el.textContent;
+  if(g==='music')gS.music=el.textContent;
+}
+
+function cPill(el,g){
+  el.parentElement.querySelectorAll('.pill').forEach(p=>p.classList.remove('sel'));
+  el.classList.add('sel');
+  if(g==='music')cS.music=el.textContent;
+}
+
+function setInt(v){
+  ['gentle','moderate','strong'].forEach(i=>document.getElementById('int-'+i).className='int-card'+(v===i?' sel-'+i:''));
+  gS.intensity=v;
+}
+
+function setCInt(v){
+  ['gentle','moderate','strong'].forEach(i=>document.getElementById('c-int-'+i).className='int-card'+(v===i?' sel-'+i:''));
+  cS.intensity=v;
+}
+
+function toggleGoal(el,name){
+  el.classList.toggle('sel');
+  if(el.classList.contains('sel'))gS.goals.push(name);
+  else gS.goals=gS.goals.filter(g=>g!==name);
+}
+
+function buildPoseGrid(){
+  const g=document.getElementById('pose-pick-grid');
+  if(!g)return;
+  g.innerHTML='';
+  allCustomPoses.forEach(p=>{
+    const d=document.createElement('div');
+    d.className='pose-pick'+(cS.selectedPoses.includes(p.name)?' sel':'');
+    d.innerHTML=`<div class="pose-pick-name">${p.name}</div><div class="pose-pick-meta">${p.category}${p.side==='bilateral'?' · both sides':''}</div>`;
+    d.onclick=()=>{
+      if(cS.selectedPoses.includes(p.name)){cS.selectedPoses=cS.selectedPoses.filter(n=>n!==p.name);d.classList.remove('sel');}
+      else{cS.selectedPoses.push(p.name);d.classList.add('sel');}
+      document.getElementById('pose-count').textContent='('+cS.selectedPoses.length+' selected)';
+    };
+    g.appendChild(d);
+  });
+}
+setTimeout(()=>buildPoseGrid(),80);
+
+function buildGuided(){
+  lastMode='guided';
+  const styleKey=gS.style;
+  let seq=flows[styleKey]?[...flows[styleKey].moderate]:[...flows.Hatha.moderate];
+  const targetSecs=gS.flowMins*60;
+  const totalSecs=seq.reduce((s,p)=>s+p.dur,0);
+  if(totalSecs>targetSecs+120){
+    let t=0,trimmed=[];
+    for(let i=0;i<seq.length;i++){
+      const p=seq[i];
+      if(p.phase==='Closing'){trimmed.push(p);break;}
+      t+=p.dur;trimmed.push(p);
+      if(t>=targetSecs-seq[seq.length-1].dur)break;
+    }
+    if(!trimmed.find(p=>p.phase==='Closing'))trimmed.push(seq[seq.length-1]);
+    seq=trimmed;
+  }
+  sess.poseList=seq;sess.voiceVol=gS.voiceVol;sess.music=gS.music;
+  renderPreview(gS.goals,styleKey,gS.intensity,gS.music);
+  showScreen('preview-screen');
+}
+
+function buildCustom(){
+  lastMode='custom';
+  if(cS.selectedPoses.length===0){alert('Pick at least one pose to get started.');return;}
+  const dur=customDur[cS.intensity];
+  const totalSecs=cS.lenMins*60;
+  const picks=allCustomPoses.filter(p=>cS.selectedPoses.includes(p.name));
+  let seq=[],t=0,i=0;
+  while(t<totalSecs-120){
+    const p=picks[i%picks.length];
+    const side=p.side==='bilateral'?'right':'both';
+    const nameSuffix=side==='right'?' (right side)':'';
+    seq.push({
+      name:p.name+nameSuffix,phase:'Practice',side,
+      form:p.form||'Hold this pose with full attention.',
+      breath:p.breath||'Slow even breath. Let the breath guide you.',
+      bilateral:p.side==='bilateral'?'Switch to the left side next — same time, same care.':null,
+      dur
+    });
+    if(p.side==='bilateral'){
+      seq.push({
+        name:p.name+' (left side)',phase:'Practice',side:'left',
+        form:'Mirror exactly what you just did on the other side.',
+        breath:p.breath||'Slow even breath.',
+        bilateral:null,dur
+      });
+    }
+    t+=dur*(p.side==='bilateral'?2:1);i++;
+  }
+  seq.push({name:'Savasana',phase:'Closing',side:'both',form:'Lie flat. Eyes closed. Let everything go. This is the most important part.',breath:'Natural breath — no control needed.',bilateral:null,dur:120});
+  sess.poseList=seq;sess.voiceVol=cS.voiceVol;sess.music=cS.music;
+  renderPreview([],'Your custom',cS.intensity,cS.music);
+  showScreen('preview-screen');
+}
+
+function startQuick(style,mins){
+  gS.style=style;gS.flowMins=mins;gS.intensity='moderate';gS.goals=[];
+  buildGuided();
+}
+
+function goBack(){showScreen(lastMode==='guided'?'guided-screen':'custom-screen');}
+
+function renderPreview(goals,style,intensity,music){
+  const totalSecs=sess.poseList.reduce((s,p)=>s+p.dur,0);
+  document.getElementById('preview-title').textContent=style+' flow';
+  document.getElementById('preview-sub').textContent='Here\'s your '+Math.round(totalSecs/60)+' minute practice. Have a look, then press go when ready.';
+
+  const ob=document.getElementById('goal-outcome-block');
+  if(goals&&goals.length>0){
+    ob.style.display='block';
+    document.getElementById('goal-outcome-title').textContent='This practice will help with: '+goals.join(' + ');
+    const outs=[...new Set(goals.flatMap(g=>goalOutcomes[g]||[]))];
+    document.getElementById('goal-outcome-items').innerHTML=outs.map(o=>`<div class="goal-outcome-item">${o}</div>`).join('');
+  }else ob.style.display='none';
+
+  const scBlock=document.getElementById('sc-preview-block');
+  if(music!=='None'){
+    scBlock.innerHTML='<div class="section-label" style="margin-top:4px;">Music — press play then start your session</div><div class="sc-wrap">'+scEmbedHTML(music)+'</div>';
+  }else scBlock.innerHTML='';
+
+  document.getElementById('summary-card').innerHTML=`
+    <div class="summary-row"><span class="summary-key">Style</span><span class="summary-val">${style}</span></div>
+    <div class="summary-row"><span class="summary-key">Effort level</span><span class="summary-val">${intensity}</span></div>
+    <div class="summary-row"><span class="summary-key">Total time</span><span class="summary-val">~${Math.round(totalSecs/60)} min</span></div>
+    <div class="summary-row"><span class="summary-key">Poses</span><span class="summary-val">${sess.poseList.length}</span></div>`;
+
+  const pl=document.getElementById('pose-list');
+  pl.innerHTML='';
+  sess.poseList.forEach((p,i)=>{
+    const m=Math.floor(p.dur/60),s=p.dur%60;
+    const ds=m>0?(s>0?m+'m '+s+'s':m+' min'):s+'s';
+    const sideTag=p.side==='right'?'<span class="pose-side-tag side-right">Right</span>':p.side==='left'?'<span class="pose-side-tag side-left">Left</span>':'<span class="pose-side-tag side-both">Both</span>';
+    pl.innerHTML+=`<div class="pose-item"><div class="pose-num">${i+1}</div><div class="pose-info"><div class="pose-name-p">${p.name}${sideTag}<span class="pose-phase-tag">${p.phase}</span></div></div><div class="pose-dur-p">${ds}</div></div>`;
+  });
+}
+
+function goToReady(){
+  const first=sess.poseList[0];
+  const total=Math.round(sess.poseList.reduce((s,p)=>s+p.dur,0)/60);
+  document.getElementById('ready-first-pose').textContent='Starting with: '+first.name;
+  document.getElementById('ready-meta').textContent=total+' minutes · '+sess.poseList.length+' poses\nGet into a comfortable spot on your mat.';
+  showScreen('ready-screen');
+}
+
+function beginCountdown(){
+  showScreen('countdown-screen');
+  const first=sess.poseList[0];
+  document.getElementById('cd-pose').textContent=first.name;
+  document.getElementById('cd-phase').textContent=first.phase;
+  let n=3;
+  document.getElementById('cd-num').textContent=n;
+  const t=setInterval(()=>{
+    n--;
+    if(n>0)document.getElementById('cd-num').textContent=n;
+    else{clearInterval(t);launchSession();}
+  },1000);
+}
+
+function launchSession(){
+  sess.poseIdx=0;sess.paused=false;sess.start=new Date();
+  document.getElementById('sess-title').textContent=sess.poseList[0].phase;
+  const scSess=document.getElementById('sc-session-block');
+  if(sess.music!=='None')scSess.innerHTML=scEmbedHTML(sess.music);
+  else scSess.innerHTML='';
+  showScreen('session-screen');
+  loadPose();
+}
+
+function loadPose(){
+  clearInterval(sess.interval);
+  const p=sess.poseList[sess.poseIdx];
+  if(!p){endSession();return;}
+  sess.poseTime=p.dur;
+  document.getElementById('curr-name').textContent=p.name;
+  document.getElementById('cue-form').textContent=p.form;
+  document.getElementById('cue-breath').textContent=p.breath;
+  document.getElementById('sess-title').textContent=p.phase;
+  document.getElementById('sess-counter').textContent=(sess.poseIdx+1)+' of '+sess.poseList.length;
+  document.getElementById('phase-text').textContent=p.phase;
+
+  const si=document.getElementById('side-indicator');
+  if(p.side&&p.side!=='both'){
+    si.style.display='inline-block';
+    si.textContent=p.side==='right'?'Right side':'Left side';
+    si.style.background=p.side==='right'?'#E8F0E8':'#F5EAE5';
+    si.style.color=p.side==='right'?'#2E4A2E':'#6B2E14';
+  }else si.style.display='none';
+
+  const sr=document.getElementById('cue-side-row');
+  if(p.bilateral){sr.style.display='flex';document.getElementById('cue-side').textContent=p.bilateral;}
+  else sr.style.display='none';
+
+  const bb=document.getElementById('bilateral-banner');
+  const next=sess.poseList[sess.poseIdx+1];
+  if(p.bilateral&&next){bb.style.display='flex';document.getElementById('bilateral-text').textContent='Coming up: '+next.name;}
+  else bb.style.display='none';
+
+  document.getElementById('next-name').textContent=next?next.name:'Final pose — almost done';
+  updateTimer();updateProgress();
+
+  sess.interval=setInterval(()=>{
+    if(sess.paused)return;
+    sess.poseTime--;
+    // play coming-up audio at 10 seconds remaining
+    if(sess.poseTime===10){
+      const n=sess.poseList[sess.poseIdx+1];
+      if(n)playComingUp(n.name,sess.voiceVol);
+    }
+    if(sess.poseTime<=0){sess.poseIdx++;loadPose();}
+    else updateTimer();
+  },1000);
+}
+
+function updateTimer(){
+  const m=Math.floor(sess.poseTime/60),s=sess.poseTime%60;
+  document.getElementById('curr-timer').textContent=m+':'+String(s).padStart(2,'0');
+}
+
+function updateProgress(){
+  document.getElementById('progress-fill').style.width=Math.round((sess.poseIdx/sess.poseList.length)*100)+'%';
+}
+
+function togglePause(){
+  sess.paused=!sess.paused;
+  document.getElementById('pause-btn').textContent=sess.paused?'Resume':'Pause';
+}
+
+function nextPose(){sess.poseIdx=Math.min(sess.poseIdx+1,sess.poseList.length-1);loadPose();}
+function prevPose(){sess.poseIdx=Math.max(sess.poseIdx-1,0);loadPose();}
+
+function endSession(){
+  clearInterval(sess.interval);
+  // hide any lingering toast/overlay
+  document.getElementById('audio-overlay').classList.remove('active');
+  document.getElementById('coming-up-toast').classList.remove('show');
+  if(sess.start){
+    const mins=Math.max(Math.round((new Date()-sess.start)/60000),1);
+    history.unshift({title:sess.poseList[0]?sess.poseList[0].phase+' session':'Session',mins,music:sess.music,date:new Date().toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'})});
+    updateStats();
+  }
+  showScreen('home-screen');
+}
+
+function updateStats(){
+  document.getElementById('sessions-val').textContent=history.length;
+  document.getElementById('mins-val').textContent=history.reduce((s,h)=>s+h.mins,0);
+  document.getElementById('streak-val').textContent=Math.min(history.length,7);
+}
+
+function renderHistory(){
+  const el=document.getElementById('history-list');
+  if(history.length===0){
+    el.innerHTML='<div class="empty-state">No sessions yet.<br>Your first one is always the hardest — and the most important.</div>';
+    return;
+  }
+  el.innerHTML=history.map(h=>`
+    <div class="history-item">
+      <div class="history-top"><span class="history-title">${h.title}</span><span class="history-date">${h.date}</span></div>
+      <div class="history-meta">${h.mins} min on the mat</div>
+      <div><span class="hbadge">${h.music}</span></div>
+    </div>`).join('');
+}
+
+const now=new Date();
+const hr=now.getHours();
+document.getElementById('hero-greeting').textContent=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
+document.getElementById('hero-date').textContent=now.toLocaleDateString('en-CA',{weekday:'long',month:'long',day:'numeric'});
+</script>
+</body>
+</html>
