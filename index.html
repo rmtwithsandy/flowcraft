@@ -521,7 +521,7 @@ function playComingUp(poseName,vol){
   const file=comingUpFiles[poseName];
   if(!file)return;
   const audio=new Audio('audio/'+file);
-  audio.volume=Math.min(1,vol/10);
+  audio.volume=1;
 
   // show overlay dim + toast
   const overlay=document.getElementById('audio-overlay');
